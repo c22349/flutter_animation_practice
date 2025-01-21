@@ -6,13 +6,11 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  // This widget is the root of your application.
   // このウィジェットはアプリケーションのルートです。
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Animate Demo',
       theme: ThemeData(
         // これを試してみてください： flutter run "でアプリケーションを実行してみてください。すると
         // 紫色のツールバーが表示されます。次に、アプリを終了せずに
@@ -93,7 +91,6 @@ class _MyHomePageState extends State<MyHomePage> {
           // 各ウィジェットのワイヤーフレームを見ることができます。
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text('You have pushed the button this many times:'),
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
