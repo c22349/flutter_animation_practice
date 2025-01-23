@@ -79,7 +79,12 @@ class _MyHomePageState extends State<MyHomePage> {
         // 各ウィジェットのワイヤーフレームを見ることができます。
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [Image.asset('images/walk.png')],
+          children: [
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.25, // 画面幅の25%
+              child: Image.asset('images/walk.png'),
+            ),
+          ],
         ),
       ),
     );
