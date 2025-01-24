@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
         // これを試してみてください： flutter run "でアプリケーションを実行してみてください。すると
         // 紫色のツールバーが表示されます。次に、アプリを終了せずに
         // 以下のcolorSchemeのseedColorをColors.greenに変更してみてください。
-        // アプリを終了せずに、コマンドラインを使った場合は 「r」を押してください。
+        // アプリを終了せずに、コマンドラインを使った場合は"r"を押してください。
         //
         // カウンタがゼロにリセットされなかったことに注目してください。
         // アプリケーションの状態はリロード中に失われません。状態をリセットするには、代わりにホット
@@ -48,11 +48,47 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
   // このsetStateの呼び出しは、Flutterフレームワークに、このStateで何かが変更されたことを伝える。
   // これにより、以下のビルドメソッドが再実行され、更新された値がディスプレイに反映されます。
   // もしsetState()を呼び出さずに__counterを変更した場合、ビルドメソッドは再度呼び出されない。
   // そのため、何も起こらないように見える。
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  bool _isMovingRight = true; // 右に動いているかどうかを示すフラグ
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 3),
+      vsync: this,
+    )..addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        setState(() {
+          _isMovingRight = !_isMovingRight; // 方向を反転
+        });
+        _controller.reverse();
+      } else if (status == AnimationStatus.dismissed) {
+        setState(() {
+          _isMovingRight = !_isMovingRight; // 方向を反転
+        });
+        _controller.forward();
+      }
+    });
+
+    // 中央からスタートするために、アニメーションの開始位置を設定
+    _controller.value = 0.5;
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     // このメソッドは、setStateが呼ばれるたびに再実行される。
@@ -61,11 +97,21 @@ class _MyHomePageState extends State<MyHomePage> {
     // Flutterフレームワークはビルドメソッドの再実行を高速化するように最適化されている。
     // 更新が必要なものは、個別にインスタンスを変更するのではなく再構築すればよい。
     // ウィジェットのインスタンスを個別に変更するのではなく、更新が必要なものを再構築するだけでよい。
+
+    // buildメソッド内でMediaQueryを使用して画面サイズを取得し、_animationを初期化します。
+    final screenWidth = MediaQuery.of(context).size.width;
+    final imageWidth = screenWidth * 0.25;
+
+    _animation = Tween<double>(
+      begin: screenWidth / 2 - imageWidth / 2, // 中央からスタート
+      end: -screenWidth / 2 + imageWidth / 2, // 左に画面幅分移動
+    ).animate(_controller);
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         // ここでは、App.buildメソッドで作成されたMyHomePageオブジェクトから値を取り出し、それを使ってappbarのタイトルを設定する。
         // App.buildメソッドによって作成されたMyHomePageオブジェクトから値を取得し、それを使用してappbarのタイトルを設定します。
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
       body: Center(
@@ -77,14 +123,17 @@ class _MyHomePageState extends State<MyHomePage> {
         // これを試してください： デバッグペイント」を起動します（IDEで 「Toggle Debug Paint 」アクションを選択するか「p 」キーを押します）。
         // IDE で 「Toggle Debug Paint」 アクションを選択するか、コンソールで 「p」 を押します）。
         // 各ウィジェットのワイヤーフレームを見ることができます。
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.25, // 画面幅の25%
-              child: Image.asset('images/walk.png'),
-            ),
-          ],
+        child: AnimatedBuilder(
+          animation: _animation,
+          builder: (context, child) {
+            return Transform.translate(
+              offset: Offset(_animation.value, 0),
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.25, // 画面幅の25%
+                child: Image.asset('images/walk.png'),
+              ),
+            );
+          },
         ),
       ),
     );
