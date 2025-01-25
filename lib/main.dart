@@ -57,6 +57,7 @@ class _MyHomePageState extends State<MyHomePage>
   late AnimationController _controller;
   late Animation<double> _animation;
   bool _isMovingRight = true; // 右に動いているかどうかを示すフラグ
+  bool _isAnimating = true; // アニメーションの状態を管理するフラグ
 
   @override
   void initState() {
@@ -123,17 +124,33 @@ class _MyHomePageState extends State<MyHomePage>
         // これを試してください： デバッグペイント」を起動します（IDEで 「Toggle Debug Paint 」アクションを選択するか「p 」キーを押します）。
         // IDE で 「Toggle Debug Paint」 アクションを選択するか、コンソールで 「p」 を押します）。
         // 各ウィジェットのワイヤーフレームを見ることができます。
-        child: AnimatedBuilder(
-          animation: _animation,
-          builder: (context, child) {
-            return Transform.translate(
-              offset: Offset(_animation.value, 0),
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.25, // 画面幅の25%
-                child: Image.asset('images/walk.png'),
-              ),
-            );
+        child: GestureDetector(
+          onTap: () {
+            setState(() {
+              if (_isAnimating) {
+                _controller.stop(); // アニメーションを停止
+              } else {
+                _controller.forward(); // アニメーションを再開
+              }
+              _isAnimating = !_isAnimating; // 状態を反転
+            });
           },
+          child: AnimatedBuilder(
+            animation: _animation,
+            builder: (context, child) {
+              return Transform(
+                alignment: Alignment.center,
+                transform:
+                    Matrix4.identity()
+                      ..translate(_animation.value, 0)
+                      ..scale(_isMovingRight ? -1.0 : 1.0, 1.0), // 反転の向きを逆に
+                child: SizedBox(
+                  width: imageWidth,
+                  child: Image.asset('images/walk.png'),
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
