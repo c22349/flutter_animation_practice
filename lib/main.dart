@@ -130,6 +130,7 @@ class _MyHomePageState extends State<MyHomePage>
               if (_isAnimating) {
                 _controller.stop(); // アニメーションを停止
               } else {
+                _isMovingRight = false; // 再開時に必ず左に移動するように設定
                 _controller.forward(); // アニメーションを再開
               }
               _isAnimating = !_isAnimating; // 状態を反転
@@ -143,7 +144,7 @@ class _MyHomePageState extends State<MyHomePage>
                 transform:
                     Matrix4.identity()
                       ..translate(_animation.value, 0)
-                      ..scale(_isMovingRight ? -1.0 : 1.0, 1.0), // 反転の向きを逆に
+                      ..scale(_isMovingRight ? 1.0 : -1.0, 1.0), // 進行方向に応じて反転
                 child: SizedBox(
                   width: imageWidth,
                   child: Image.asset('images/walk.png'),
