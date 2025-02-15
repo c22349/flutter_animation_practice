@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
         //
         // これは値だけでなく、コードにも有効です： ほとんどのコード変更は
         // ほとんどのコード変更はホットリロードだけでテストできる。
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
+        colorScheme: ColorScheme.fromSeed(seedColor: AppConstants.seedColor),
         useMaterial3: true,
       ),
       home: const MyHomePage(title: AppConstants.appName),
