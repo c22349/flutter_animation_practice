@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: AppConstants.seedColor),
         useMaterial3: true,
       ),
+      darkTheme: ThemeData.dark(),
       home: const MyHomePage(title: AppConstants.appName),
     );
   }
